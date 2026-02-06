@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Подтверждение удаления{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Удаление сообщения</h1>
+    <div class="alert alert-danger">
+        <h4 class="alert-heading">Внимание! Это действие отменить нельзя!</h4>
+        <p>Вы уверенны, что хотите удалить сообщение:
+            <strong>{{ message.subject|truncatechars:100 }} {{ message.created_at }}</strong></p>
+        <hr>
+        <p class="mb-0">При удалении сообщения, которое используется в рассылках, могут возникнуть проблемы.</p>
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-danger">Удалить</button>
+        <a href="{% url 'mailing_message:list' %}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}
+
+

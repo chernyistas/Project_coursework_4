@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Детальная информация о сообщении{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">Информация о сообщении</h5>
+    </div>
+    <div class="card-body">
+        <p>ID сообщения: {{ message.id }}</p>
+        <p>Тема сообщения: {{ message.subject }}</p>
+        <p>Текст сообщения: {{ message.body|linebreaks }}</p>
+        <p>Дата создания: {{ message.created_at }}</p>
+        {% if message.attachment %}
+            <p>Вложение: <a href="{{ message.attachment.url }}">{{ message.attachment.name }}</a></p>
+        {% endif %}
+    </div>
+    <div class="card-footer">
+        <a href="{% url 'home' %}" class="btn btn-sm btn-info">К статистике</a>
+        <a href="{% url 'mailing_message:list' %}" class="btn btn-sm btn-info">К списку сообщений</a>
+        <a href="{% url 'mailing_message:update' message.pk %}" class="btn btn-sm btn-primary">Редактировать</a>
+        <a href="{% url 'mailing_message:delete' message.pk %}" class="btn btn-sm btn-danger">Удалить</a>
+    </div>
+</div>
+
+{% endblock %}
+
