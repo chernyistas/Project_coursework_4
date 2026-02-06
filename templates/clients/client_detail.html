@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Детальная информация о клиенте{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">Информация о клиенте</h5>
+    </div>
+    <div class="card-body">
+        <p>ID клиента: {{ client.id }}</p>
+        <p>Имя Фамилия Отчество: {{ client.full_name }}</p>
+        <p>Почта: <a href="mailto:{{ client.email }}">{{ client.email }}</a></p>
+        <p>Комментарий: {{ client.comment|default:"Нет комментария"|linebreaks }}</p>
+    </div>
+    <div class="card-footer">
+        <a href="{% url 'home' %}" class="btn btn-sm btn-info">К статистике</a>
+        <a href="{% url 'clients:list' %}" class="btn btn-sm btn-info">К списку</a>
+        <a href="{% url 'clients:update' client.pk %}" class="btn btn-sm btn-primary">Редактировать</a>
+        <a href="{% url 'clients:delete' client.pk %}" class="btn btn-sm btn-danger">Удалить</a>
+    </div>
+</div>
+
+{% endblock %}
+
