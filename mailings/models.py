@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils import timezone
 from clients.models import Client
 from mailing_message.models import Message
 
@@ -23,6 +23,20 @@ class Mailing(models.Model):
 
     def __str__(self):
         return f"Рассылка #{self.id}: {self.message.subject[:30]}..."
+
+    def update_status(self):
+        now = timezone.now()
+
+        if now < self.start_time:
+            new_status = self.CREATED
+        elif self.start_time <= now <= self.end_time:
+            new_status = self.STARTED
+        else:
+            new_status = self.COMPLETED
+
+        if self.status != new_status:
+            self.status = new_status
+            self.save()
 
     class Meta:
         verbose_name = "рассылка"

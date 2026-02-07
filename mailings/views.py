@@ -21,6 +21,11 @@ class MailingDetailView(DetailView):
     template_name = "mailings/mailing_detail.html"
     context_object_name = "mailing"
 
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        obj.update_status()
+        return obj
+
 class MailingCreateView(CreateView):
     model = Mailing
     form_class = MailingForm
