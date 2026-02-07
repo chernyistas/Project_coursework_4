@@ -9,4 +9,5 @@ urlpatterns = [
     path("clients/", include("clients.urls")),
     path("message/", include("mailing_message.urls")),
     path("mailings/", include("mailings.urls")),
+    path("attempts/", include("attempts.urls")),
 ]
