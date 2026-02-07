@@ -16,7 +16,7 @@
         {% endif %}
     </div>
     <div class="card-footer">
-        <a href="{% url 'home' %}" class="btn btn-sm btn-info">К статистике</a>
+        <a href="{% url 'home' %}" class="btn btn-sm btn-warning">К статистике</a>
         <a href="{% url 'mailing_message:list' %}" class="btn btn-sm btn-info">К списку сообщений</a>
         <a href="{% url 'mailing_message:update' message.pk %}" class="btn btn-sm btn-primary">Редактировать</a>
         <a href="{% url 'mailing_message:delete' message.pk %}" class="btn btn-sm btn-danger">Удалить</a>
