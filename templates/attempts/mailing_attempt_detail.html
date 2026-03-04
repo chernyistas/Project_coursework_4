@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Детальная информация о попытке рассылки{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">Информация о попытке рассылки</h5>
+    </div>
+    <div class="card-body">
+        <p><strong>ID попытки рассылки:</strong>{{ attempt.id }}</p>
+        <p><strong>Дата и время:</strong>{{ attempt.attempt_time }}</p>
+        <p><strong>Статус:</strong>
+            {% if attempt.status == "success" %}
+                <span class="badge bg-success">Успешно</span>
+            {% elif attempt.status == "fault" %}
+                <span class="badge bg-danger">Не успешно</span>
+            {% endif %}
+        </p>
+        <p><strong>Рассылка:</strong>
+            <a href="{% url 'mailings:detail' attempt.mailing.pk %}">
+                #{{attempt.mailing.id }} - {{ attempt.mailing.message.subject|truncatechars:50 }}
+            </a>
+        </p>
+        <p><strong>Ответ сервера:</strong></p>
+        <pre class="bg-light p-3">{{ attempt.server_response|default:"Нет ответа" }}</pre>
+    </div>
+    <div class="card-footer">
+        <a href="{% url 'home' %}" class="btn btn-sm btn-info">К статистике</a>
+        <a href="{% url 'attempts:list' %}" class="btn btn-sm btn-info">К списку попыток</a>
+        <a href="{% url 'mailings:list' %}" class="btn btn-sm btn-secondary">К списку рассылок</a>
+    </div>
+</div>
+{% endblock %}
+
