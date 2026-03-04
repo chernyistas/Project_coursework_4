@@ -2,7 +2,13 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import (
+    ListView,
+    DetailView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+)
 from django.utils import timezone
 from django.core.mail import send_mail
 
@@ -16,6 +22,7 @@ class MailingListView(ListView):
     template_name = "mailings/mailing_list.html"
     context_object_name = "mailings"
 
+
 class MailingDetailView(DetailView):
     model = Mailing
     template_name = "mailings/mailing_detail.html"
@@ -26,11 +33,13 @@ class MailingDetailView(DetailView):
         obj.update_status()
         return obj
 
+
 class MailingCreateView(CreateView):
     model = Mailing
     form_class = MailingForm
     template_name = "mailings/mailing_form.html"
     success_url = reverse_lazy("mailings:list")
+
 
 class MailingUpdateView(UpdateView):
     model = Mailing
@@ -38,10 +47,12 @@ class MailingUpdateView(UpdateView):
     template_name = "mailings/mailing_form.html"
     success_url = reverse_lazy("mailings:list")
 
+
 class MailingDeleteView(DeleteView):
     model = Mailing
     template_name = "mailings/mailing_confirm_delete.html"
     success_url = reverse_lazy("mailings:list")
+
 
 class SendMailingView(View):
     def post(self, request, pk):
@@ -72,17 +83,18 @@ class SendMailingView(View):
                 MailingAttempt.objects.create(
                     mailing=mailing,
                     status=MailingAttempt.SUCCESS,
-                    server_response="Отправлено успешно"
+                    server_response="Отправлено успешно",
                 )
                 success_count += 1
 
             except Exception as e:
                 MailingAttempt.objects.create(
-                    mailing=mailing,
-                    status=MailingAttempt.FAULT,
-                    server_response=str(e)
+                    mailing=mailing, status=MailingAttempt.FAULT, server_response=str(e)
                 )
                 error_count += 1
 
-        messages.success(request, f"Отправлено {success_count} писем успешно, {error_count} с ошибкой")
+        messages.success(
+            request,
+            f"Отправлено {success_count} писем успешно, {error_count} с ошибкой",
+        )
         return redirect("mailings:detail", pk=pk)

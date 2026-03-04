@@ -8,6 +8,7 @@ class MailingAttemptListView(ListView):
     template_name = "attempts/mailing_attempt_list.html"
     context_object_name = "attempts"
 
+
 class MailingAttemptDetailView(DetailView):
     model = MailingAttempt
     template_name = "attempts/mailing_attempt_detail.html"

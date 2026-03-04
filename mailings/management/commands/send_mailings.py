@@ -4,6 +4,7 @@ from django.core.mail import send_mail
 from mailings.models import Mailing
 from attempts.models import MailingAttempt
 
+
 class Command(BaseCommand):
     help = "Отправляет все активные рассылки"
 
@@ -22,13 +23,11 @@ class Command(BaseCommand):
                 pk=options["mailing_id"],
                 status="started",
                 start_time__lte=now,
-                end_time__gte=now
+                end_time__gte=now,
             )
         else:
             mailings = Mailing.objects.filter(
-                status="started",
-                start_time__lte=now,
-                end_time__gte=now
+                status="started", start_time__lte=now, end_time__gte=now
             )
 
         if not mailings.exists():
@@ -39,7 +38,9 @@ class Command(BaseCommand):
         total_errors = 0
 
         for mailing in mailings:
-            self.stdout.write(f"Отправка рассылки #{mailing.id}: {mailing.message.subject}")
+            self.stdout.write(
+                f"Отправка рассылки #{mailing.id}: {mailing.message.subject}"
+            )
 
             mailing_sent = 0
             mailing_errors = 0
@@ -57,7 +58,7 @@ class Command(BaseCommand):
                     MailingAttempt.objects.create(
                         mailing=mailing,
                         status=MailingAttempt.SUCCESS,
-                        server_response="Отправлено через команду"
+                        server_response="Отправлено через команду",
                     )
                     mailing_sent += 1
 
@@ -65,10 +66,12 @@ class Command(BaseCommand):
                     MailingAttempt.objects.create(
                         mailing=mailing,
                         status=MailingAttempt.FAULT,
-                        server_response=str(e)
+                        server_response=str(e),
                     )
                     mailing_errors += 1
-                    self.stdout.write(self.style.ERROR(f"Ошибка для {client.email}: {e}"))
+                    self.stdout.write(
+                        self.style.ERROR(f"Ошибка для {client.email}: {e}")
+                    )
 
             self.stdout.write(
                 self.style.SUCCESS(
@@ -84,6 +87,5 @@ class Command(BaseCommand):
                 f"ИТОГО: обработано рассылок: {mailings.count()}, "
                 f"отправлено писем: {total_sent}, "
                 f"ошибок: {total_errors}"
-
             )
         )

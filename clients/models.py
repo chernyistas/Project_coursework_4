@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Client(models.Model):
     email = models.EmailField(unique=True, verbose_name="Почта")
     full_name = models.CharField(max_length=255, verbose_name="ФИО")
@@ -11,4 +12,4 @@ class Client(models.Model):
     class Meta:
         verbose_name = "клиент"
         verbose_name_plural = "клиенты"
-        ordering = ['email']
+        ordering = ["email"]
