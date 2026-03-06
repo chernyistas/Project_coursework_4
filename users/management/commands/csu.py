@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from users.models import User
 
+
 class Command(BaseCommand):
     help = "Создание суперпользователя с email admin@sky.pro"
 
@@ -19,11 +20,6 @@ class Command(BaseCommand):
 
         user.save()
 
-        self.stdout.write(self.style.SUCCESS(f"Суперпользователь создан: {user.email}!"))
-
-
-
-
-
-
-
+        self.stdout.write(
+            self.style.SUCCESS(f"Суперпользователь создан: {user.email}!")
+        )

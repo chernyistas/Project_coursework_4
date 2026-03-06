@@ -11,6 +11,7 @@ urlpatterns = [
     path("message/", include("mailing_message.urls")),
     path("mailings/", include("mailings.urls")),
     path("attempts/", include("attempts.urls")),
+    path("users/", include("users.urls")),
 ]
 
 if settings.DEBUG:
