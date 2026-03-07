@@ -18,8 +18,6 @@ from mailings.forms import MailingForm
 from mailings.models import Mailing
 
 
-
-
 class MailingListView(ListView):
     model = Mailing
     template_name = "mailings/mailing_list.html"

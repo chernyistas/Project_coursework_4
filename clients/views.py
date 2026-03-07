@@ -50,7 +50,7 @@ class ClientUpdateView(UpdateView):
     success_url = reverse_lazy("clients:list")
 
     def get_object(self, queryset=None):
-        obj  = super().get_object(queryset)
+        obj = super().get_object(queryset)
         if obj.owner != self.request.user:
             raise PermissionDenied("Это не ваш клиент!")
         return obj

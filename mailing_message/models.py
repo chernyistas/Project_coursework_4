@@ -11,7 +11,12 @@ class Message(models.Model):
         upload_to="message_attachment/", blank=True, null=True, verbose_name="Вложение"
     )
     owner = models.ForeignKey(
-        User, on_delete=models.CASCADE, verbose_name="Владелец", related_name="messages", null=True, blank=True
+        User,
+        on_delete=models.CASCADE,
+        verbose_name="Владелец",
+        related_name="messages",
+        null=True,
+        blank=True,
     )
 
     def __str__(self):

@@ -18,6 +18,7 @@ class MessageListView(ListView):
     def get_queryset(self, queryset=None):
         return Message.objects.filter(owner=self.request.user)
 
+
 class MessageDetailView(DetailView):
     model = Message
     template_name = "mailing_message/message_detail.html"
@@ -28,7 +29,6 @@ class MessageDetailView(DetailView):
         if obj.owner != self.request.user:
             raise PermissionDenied("Это не ваш клиент")
         return obj
-
 
 
 class MessageCreateView(CreateView):
@@ -53,7 +53,6 @@ class MessageUpdateView(UpdateView):
         if obj.owner != self.request.user:
             raise PermissionDenied("Это не ваш клиент")
         return obj
-
 
 
 class MessageDeleteView(DeleteView):
