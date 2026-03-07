@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views import View
@@ -17,10 +18,15 @@ from mailings.forms import MailingForm
 from mailings.models import Mailing
 
 
+
+
 class MailingListView(ListView):
     model = Mailing
     template_name = "mailings/mailing_list.html"
     context_object_name = "mailings"
+
+    def get_queryset(self, queryset=None):
+        return Mailing.objects.filter(owner=self.request.user)
 
 
 class MailingDetailView(DetailView):
@@ -31,6 +37,8 @@ class MailingDetailView(DetailView):
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
         obj.update_status()
+        if obj.owner != self.request.user:
+            raise PermissionDenied("Это не ваш клиент")
         return obj
 
 
@@ -40,6 +48,10 @@ class MailingCreateView(CreateView):
     template_name = "mailings/mailing_form.html"
     success_url = reverse_lazy("mailings:list")
 
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
+
 
 class MailingUpdateView(UpdateView):
     model = Mailing
@@ -47,18 +59,34 @@ class MailingUpdateView(UpdateView):
     template_name = "mailings/mailing_form.html"
     success_url = reverse_lazy("mailings:list")
 
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        if obj.owner != self.request.user:
+            raise PermissionDenied("Это не ваш клиент")
+        return obj
+
 
 class MailingDeleteView(DeleteView):
     model = Mailing
     template_name = "mailings/mailing_confirm_delete.html"
     success_url = reverse_lazy("mailings:list")
 
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        if obj.owner != self.request.user:
+            raise PermissionDenied("Это не ваш клиент")
+        return obj
+
 
 class SendMailingView(View):
     def post(self, request, pk):
         mailing = get_object_or_404(Mailing, pk=pk)
-        now = timezone.now()
 
+        if mailing.owner != request.user:
+            messages.error(request, "Это не ваша рассылка!")
+            return redirect("mailings:list")
+
+        now = timezone.now()
         if now < mailing.start_time:
             messages.error(request, "Рассылка ещё не началась")
             return redirect("mailings:detail", pk=pk)

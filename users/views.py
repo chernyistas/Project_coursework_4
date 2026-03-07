@@ -18,6 +18,10 @@ class ProfileView(DetailView):
     template_name = "users/profile_detail.html"
     context_object_name = "user"
 
+    def get_object(self, queryset=None):
+        """Возвращает текущего пользователя"""
+        return self.request.user
+
 
 class ProfileUpdateView(UpdateView):
     model = User

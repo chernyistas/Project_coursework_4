@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from clients.models import Client
 from mailing_message.models import Message
+from users.models import User
 
 
 class Mailing(models.Model):
@@ -27,6 +28,7 @@ class Mailing(models.Model):
         related_name="mailings",
         verbose_name="Сообщение",
     )
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Владелец", related_name="mailings", null=True, blank=True)
 
     def __str__(self):
         return f"Рассылка #{self.id}: {self.message.subject[:30]}..."
