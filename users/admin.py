@@ -1,9 +1,11 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from users.models import User
 
 
 @admin.register(User)
-class AdminUser(admin.ModelAdmin):
+class AdminUser(BaseUserAdmin):
+    ordering = ("email",)
     list_display = (
         "email",
         "phone",
@@ -34,4 +36,14 @@ class AdminUser(admin.ModelAdmin):
             },
         ),
         ("Даты", {"fields": ("last_login", "date_joined")}),
+    )
+
+    add_fieldsets = (
+    (
+        None,
+        {
+            "classes": ("wide",),
+            "fields": ("email", "phone", "country", "password1", "password2"),
+        }
+    )
     )

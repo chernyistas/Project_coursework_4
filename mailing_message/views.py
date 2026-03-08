@@ -16,6 +16,10 @@ class MessageListView(ListView):
     context_object_name = "messages"
 
     def get_queryset(self, queryset=None):
+        if self.request.user.is_superuser:
+            return Message.objects.all()
+        if self.request.user.groups.filter(name="Менеджеры").exists():
+            return Message.objects.all()
         return Message.objects.filter(owner=self.request.user)
 
 
@@ -26,6 +30,10 @@ class MessageDetailView(DetailView):
 
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
+        if self.request.user.is_superuser:
+            return obj
+        if self.request.user.groups.filter(name="Менеджеры").exists():
+            return obj
         if obj.owner != self.request.user:
             raise PermissionDenied("Это не ваш клиент")
         return obj
@@ -50,6 +58,10 @@ class MessageUpdateView(UpdateView):
 
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
+        if self.request.user.is_superuser:
+            return obj
+        if self.request.user.groups.filter(name="Менеджеры").exists():
+            return obj
         if obj.owner != self.request.user:
             raise PermissionDenied("Это не ваш клиент")
         return obj
@@ -62,6 +74,10 @@ class MessageDeleteView(DeleteView):
 
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
+        if self.request.user.is_superuser:
+            return obj
+        if self.request.user.groups.filter(name="Менеджеры").exists():
+            return obj
         if obj.owner != self.request.user:
             raise PermissionDenied("Это не ваш клиент")
         return obj

@@ -17,6 +17,10 @@ class ClientListView(ListView):
     context_object_name = "clients"
 
     def get_queryset(self, queryset=None):
+        if self.request.user.is_superuser:
+            return Client.objects.all()
+        if self.request.user.groups.filter(name="Менеджеры").exists():
+            return Client.objects.all()
         return Client.objects.filter(owner=self.request.user)
 
 
@@ -27,6 +31,10 @@ class ClientDetailView(DetailView):
 
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
+        if self.request.user.is_superuser:
+            return obj
+        if self.request.user.groups.filter(name="Менеджеры").exists():
+            return obj
         if obj.owner != self.request.user:
             raise PermissionDenied("Это не ваш клиент!")
         return obj
@@ -51,6 +59,10 @@ class ClientUpdateView(UpdateView):
 
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
+        if self.request.user.is_superuser:
+            return obj
+        if self.request.user.groups.filter(name="Менеджеры").exists():
+            return obj
         if obj.owner != self.request.user:
             raise PermissionDenied("Это не ваш клиент!")
         return obj
@@ -63,6 +75,10 @@ class ClientDeleteView(DeleteView):
 
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
+        if self.request.user.is_superuser:
+            return obj
+        if self.request.user.groups.filter(name="Менеджеры").exists():
+            return obj
         if obj.owner != self.request.user:
             raise PermissionDenied("Это не ваш клиент!")
         return obj

@@ -24,6 +24,10 @@ class MailingListView(ListView):
     context_object_name = "mailings"
 
     def get_queryset(self, queryset=None):
+        if self.request.user.is_superuser:
+            return Mailing.objects.all()
+        if self.request.user.groups.filter(name="Менеджеры").exists():
+            return Mailing.objects.all()
         return Mailing.objects.filter(owner=self.request.user)
 
 
@@ -34,6 +38,10 @@ class MailingDetailView(DetailView):
 
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
+        if self.request.user.is_superuser:
+            return obj
+        if self.request.user.groups.filter(name="Менеджеры").exists():
+            return obj
         obj.update_status()
         if obj.owner != self.request.user:
             raise PermissionDenied("Это не ваш клиент")
@@ -59,6 +67,10 @@ class MailingUpdateView(UpdateView):
 
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
+        if self.request.user.is_superuser:
+            return obj
+        if self.request.user.groups.filter(name="Менеджеры").exists():
+            return obj
         if obj.owner != self.request.user:
             raise PermissionDenied("Это не ваш клиент")
         return obj
@@ -71,6 +83,10 @@ class MailingDeleteView(DeleteView):
 
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
+        if self.request.user.is_superuser:
+            return obj
+        if self.request.user.groups.filter(name="Менеджеры").exists():
+            return obj
         if obj.owner != self.request.user:
             raise PermissionDenied("Это не ваш клиент")
         return obj

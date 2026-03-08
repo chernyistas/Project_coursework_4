@@ -15,8 +15,10 @@
     <div class="card-footer">
         <a href="{% url 'home' %}" class="btn btn-sm btn-info">К статистике</a>
         <a href="{% url 'clients:list' %}" class="btn btn-sm btn-info">К списку</a>
-        <a href="{% url 'clients:update' client.pk %}" class="btn btn-sm btn-primary">Редактировать</a>
-        <a href="{% url 'clients:delete' client.pk %}" class="btn btn-sm btn-danger">Удалить</a>
+        {% if user == client.owner %}
+            <a href="{% url 'clients:update' client.pk %}" class="btn btn-sm btn-primary">Редактировать</a>
+            <a href="{% url 'clients:delete' client.pk %}" class="btn btn-sm btn-danger">Удалить</a>
+        {% endif %}
     </div>
 </div>
 

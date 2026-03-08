@@ -35,14 +35,16 @@
     <div class="card-footer">
         <a href="{% url 'home' %}" class="btn btn-sm btn-warning">К статистике</a>
         <a href="{% url 'mailings:list' %}" class="btn btn-sm btn-info">К списку</a>
-        {% if mailing.status == "started" or mailing.status == "created" %}
-            <form method="post" action="{% url 'mailings:send' mailing.pk %}" style="display: inline;">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-sm btn-success">Отправить сейчас</button>
-            </form>
+        {% if user == mailing.owner %}
+            {% if mailing.status == "started" or mailing.status == "created" %}
+                <form method="post" action="{% url 'mailings:send' mailing.pk %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-success">Отправить сейчас</button>
+                </form>
+            {% endif %}
+            <a href="{% url 'mailings:update' mailing.pk %}" class="btn btn-sm btn-primary">Редактировать</a>
+            <a href="{% url 'mailings:delete' mailing.pk %}" class="btn btn-sm btn-danger">Удалить</a>
         {% endif %}
-        <a href="{% url 'mailings:update' mailing.pk %}" class="btn btn-sm btn-primary">Редактировать</a>
-        <a href="{% url 'mailings:delete' mailing.pk %}" class="btn btn-sm btn-danger">Удалить</a>
     </div>
 </div>
 {% endblock %}

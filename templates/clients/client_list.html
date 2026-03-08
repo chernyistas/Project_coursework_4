@@ -24,8 +24,10 @@
                 <td>{{ client.comment|truncatechars:100 }}</td>
                 <td>
                     <a href="{% url 'clients:detail' client.pk %}" class="btn btn-sm btn-info">Посмотреть</a>
-                    <a href="{% url 'clients:update' client.pk %}" class="btn btn-sm btn-warning">Редактировать</a>
-                    <a href="{% url 'clients:delete' client.pk %}" class="btn btn-sm btn-danger">Удалить</a>
+                    {% if user == client.owner %}
+                        <a href="{% url 'clients:update' client.pk %}" class="btn btn-sm btn-warning">Редактировать</a>
+                        <a href="{% url 'clients:delete' client.pk %}" class="btn btn-sm btn-danger">Удалить</a>
+                    {% endif %}
                 </td>
             </tr>
         {% empty %}

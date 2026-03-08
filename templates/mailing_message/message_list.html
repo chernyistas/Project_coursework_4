@@ -24,8 +24,14 @@
                 <td>{{ message.created_at }}</td>
                 <td>
                     <a href="{% url 'mailing_message:detail' message.pk %}" class="btn btn-sm btn-info">Посмотреть</a>
-                    <a href="{% url 'mailing_message:update' message.pk %}" class="btn btn-sm btn-warning">Редактировать</a>
-                    <a href="{% url 'mailing_message:delete' message.pk %}" class="btn btn-sm btn-danger">Удалить</a>
+                    {% if user == message.owner %}
+                        <a href="{% url 'mailing_message:update' message.pk %}" class="btn btn-sm btn-warning">
+                            Редактировать
+                        </a>
+                        <a href="{% url 'mailing_message:delete' message.pk %}" class="btn btn-sm btn-danger">
+                            Удалить
+                        </a>
+                    {% endif %}
                 </td>
             </tr>
         {% empty %}
