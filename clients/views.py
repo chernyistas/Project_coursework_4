@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
@@ -12,10 +13,17 @@ class ClientListView(ListView):
     context_object_name = "clients"
 
     def get_queryset(self, queryset=None):
-        if self.request.user.is_superuser:
-            return Client.objects.all()
-        if self.request.user.groups.filter(name="Менеджеры").exists():
-            return Client.objects.all()
+        if (
+            self.request.user.is_superuser
+            or self.request.user.groups.filter(name="Менеджеры").exists()
+        ):
+            cache_key = "all_clients"
+            clients = cache.get(cache_key)
+            if clients is None:
+                clients = list(Client.objects.all())
+                cache.set(cache_key, clients, 300)
+            return clients
+
         return Client.objects.filter(owner=self.request.user)
 
 
@@ -43,6 +51,7 @@ class ClientCreateView(CreateView):
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
+        cache.delete("all_clients")
         return super().form_valid(form)
 
 
@@ -62,6 +71,10 @@ class ClientUpdateView(UpdateView):
             raise PermissionDenied("Это не ваш клиент!")
         return obj
 
+    def form_valid(self, form):
+        cache.delete("all_clients")
+        return super().form_valid(form)
+
 
 class ClientDeleteView(DeleteView):
     model = Client
@@ -77,3 +90,7 @@ class ClientDeleteView(DeleteView):
         if obj.owner != self.request.user:
             raise PermissionDenied("Это не ваш клиент!")
         return obj
+
+    def delete(self, request, *args, **kwargs):
+        cache.delete("all_clients")
+        return super().delete(request, *args, **kwargs)

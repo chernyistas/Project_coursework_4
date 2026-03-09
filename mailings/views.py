@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect
@@ -19,10 +20,17 @@ class MailingListView(ListView):
     context_object_name = "mailings"
 
     def get_queryset(self, queryset=None):
-        if self.request.user.is_superuser:
-            return Mailing.objects.all()
-        if self.request.user.groups.filter(name="Менеджеры").exists():
-            return Mailing.objects.all()
+        if (
+            self.request.user.is_superuser
+            or self.request.user.groups.filter(name="Менеджеры").exists()
+        ):
+            cache_key = "all_mailings"
+            mailings = cache.get(cache_key)
+            if mailings is None:
+                mailings = list(Mailing.objects.all())
+                cache.set(cache_key, mailings, 300)
+            return mailings
+
         return Mailing.objects.filter(owner=self.request.user)
 
 
@@ -51,6 +59,7 @@ class MailingCreateView(CreateView):
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
+        cache.delete("all_mailings")
         return super().form_valid(form)
 
 
@@ -70,6 +79,10 @@ class MailingUpdateView(UpdateView):
             raise PermissionDenied("Это не ваш клиент")
         return obj
 
+    def form_valid(self, form):
+        cache.delete("all_mailings")
+        return super().form_valid(form)
+
 
 class MailingDeleteView(DeleteView):
     model = Mailing
@@ -85,6 +98,10 @@ class MailingDeleteView(DeleteView):
         if obj.owner != self.request.user:
             raise PermissionDenied("Это не ваш клиент")
         return obj
+
+    def delete(self, request, *args, **kwargs):
+        cache.delete("all_mailings")
+        return super().delete(request, *args, **kwargs)
 
 
 class SendMailingView(View):

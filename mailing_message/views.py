@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
@@ -12,10 +13,17 @@ class MessageListView(ListView):
     context_object_name = "messages"
 
     def get_queryset(self, queryset=None):
-        if self.request.user.is_superuser:
-            return Message.objects.all()
-        if self.request.user.groups.filter(name="Менеджеры").exists():
-            return Message.objects.all()
+        if (
+            self.request.user.is_superuser
+            or self.request.user.groups.filter(name="Менеджеры").exists()
+        ):
+            cache_key = "all_messages"
+            messages = cache.get(cache_key)
+            if messages is None:
+                messages = list(Message.objects.all())
+                cache.set(cache_key, messages, 300)
+            return messages
+
         return Message.objects.filter(owner=self.request.user)
 
 
@@ -43,6 +51,7 @@ class MessageCreateView(CreateView):
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
+        cache.delete("all_messages")
         return super().form_valid(form)
 
 
@@ -62,6 +71,10 @@ class MessageUpdateView(UpdateView):
             raise PermissionDenied("Это не ваш клиент")
         return obj
 
+    def form_valid(self, form):
+        cache.delete("all_messages")
+        return super().form_valid(form)
+
 
 class MessageDeleteView(DeleteView):
     model = Message
@@ -77,3 +90,7 @@ class MessageDeleteView(DeleteView):
         if obj.owner != self.request.user:
             raise PermissionDenied("Это не ваш клиент")
         return obj
+
+    def delete(self, request, *args, **kwargs):
+        cache.delete("all_messages")
+        return super().delete(request, *args, **kwargs)
