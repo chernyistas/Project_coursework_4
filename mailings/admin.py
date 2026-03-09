@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from .models import Mailing
 
 
@@ -19,7 +20,7 @@ class MailingAdmin(admin.ModelAdmin):
     ordering = ("-created_at",)
     list_display_links = ("id", "short_message")
 
-    def short_message(self, obj):
+    def short_message(self, obj: Mailing) -> str:
         """Краткое описание сообщения"""
         return (
             f"{obj.message.subject[:30]}..."
@@ -27,10 +28,10 @@ class MailingAdmin(admin.ModelAdmin):
             else obj.message.subject
         )
 
-    short_message.short_description = "Сообщение"
+    short_message.short_description = "Сообщение"  # type: ignore[attr-defined]
 
     def clients_count(self, obj):
         """Количество клиентов в рассылке"""
         return obj.clients.count()
 
-    clients_count.short_description = "Количество клиентов"
+    clients_count.short_description = "Количество клиентов"  # type: ignore[attr-defined]

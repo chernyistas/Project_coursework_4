@@ -20,10 +20,10 @@ class ClientAdmin(admin.ModelAdmin):
     list_filter = ()
     list_per_page = 20
 
-    def short_comment(self, obj):
+    def short_comment(self, obj: Client) -> str:
         """Отображаем только первые 50 символов комментария"""
         if obj.comment:
             return obj.comment[:50] + "..." if len(obj.comment) > 50 else obj.comment
         return "-"
 
-    short_comment.short_description = "Комментарий"
+    short_comment.short_description = "Комментарий"  # type: ignore[attr-defined]

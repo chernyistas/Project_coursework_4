@@ -1,6 +1,6 @@
 from django.urls import path
 
-from attempts.views import MailingAttemptListView, MailingAttemptDetailView
+from attempts.views import MailingAttemptDetailView, MailingAttemptListView
 
 app_name = "attempts"
 

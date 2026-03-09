@@ -1,6 +1,7 @@
 from django import forms
-from .models import Mailing
 from django.utils import timezone
+
+from .models import Mailing
 
 
 class MailingForm(forms.ModelForm):

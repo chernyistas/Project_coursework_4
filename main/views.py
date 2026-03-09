@@ -1,7 +1,7 @@
 from django.views.generic import TemplateView
 
-from mailings.models import Mailing
 from clients.models import Client
+from mailings.models import Mailing
 
 
 class HomeView(TemplateView):

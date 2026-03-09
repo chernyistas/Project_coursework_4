@@ -3,8 +3,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.management import BaseCommand
 
 from clients.models import Client
-from mailings.models import Mailing
 from mailing_message.models import Message
+from mailings.models import Mailing
 from users.models import User
 
 
@@ -55,4 +55,3 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.SUCCESS("Группа 'Менеджеры' успешно создана с правами!")
         )
-

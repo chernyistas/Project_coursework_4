@@ -11,7 +11,7 @@ class MailAttemptAdmin(admin.ModelAdmin):
     readonly_fields = ("attempt_time",)
     ordering = ("-attempt_time",)
 
-    def short_response(self, obj):
+    def short_response(self, obj: MailingAttempt) -> str:
         """Отображаем только первые 50 символов ответа сервера"""
         if obj.server_response:
             return (
@@ -21,4 +21,4 @@ class MailAttemptAdmin(admin.ModelAdmin):
             )
         return "-"
 
-    short_response.short_description = "Ответ сервера"
+    short_response.short_description = "Ответ сервера"  # type: ignore[attr-defined]

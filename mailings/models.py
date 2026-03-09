@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+
 from clients.models import Client
 from mailing_message.models import Message
 from users.models import User
