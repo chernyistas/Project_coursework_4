@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{%  block title %}Список рассылок{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Список рассылок</h2>
+        <a href="{% url 'mailings:create' %}" class="btn btn-secondary">Создать рассылку</a>
+        <a href="{% url 'users:stats' %}" class="btn btn-info">Статистика</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Статус</th>
+                <th>Тема сообщений</th>
+                <th>Дата начала</th>
+                <th>Дата окончания</th>
+                <th>Количество Рассылок</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for mailing in mailings %}
+            <tr>
+                <td>{{ mailing.id }}</td>
+                <td>
+                    {% if mailing.status == 'created' %}
+                        <span class="badge bg-secondary">Создана</span>
+                    {% elif mailing.status == 'started' %}
+                        <span class="badge bg-success">Запущена</span>
+                    {% elif mailing.status == 'completed' %}
+                        <span class="badge bg-warning">Завершена</span>
+                    {% endif %}
+                </td>
+                <td>{{ mailing.message.subject|truncatechars:50 }}</td>
+                <td>{{ mailing.start_time }}</td>
+                <td>{{ mailing.end_time }}</td>
+                <td>{{ mailing.clients.count }}</td>
+                <td>
+                    <a href="{% url 'mailings:detail' mailing.pk %}" class="btn btn-sm btn-info">Посмотреть</a>
+                    {% if user == mailing.owner %}
+                        <a href="{% url 'mailings:update' mailing.pk %}" class="btn btn-sm btn-warning">Редактировать</a>
+                        <a href="{% url 'mailings:delete' mailing.pk %}" class="btn btn-sm btn-danger">Удалить</a>
+                        {% if mailing.status == 'started' or mailing.status == 'created' %}
+                            <form method="post" action="{% url 'mailings:send' mailing.pk %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-success">Отправить</button>
+                            </form>
+                        {% endif %}
+                    {% endif %}
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">Рассылки не найдены</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

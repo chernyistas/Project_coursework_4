@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Детальная информация о рассылке{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">Информация о рассылке</h5>
+    </div>
+    <div class="card-body">
+        <p>ID рассылки, статус: {{ mailing.id }}
+            {% if mailing.status == 'created' %}
+                <span class="badge bg-secondary">Создана</span>
+            {% elif mailing.status == 'started' %}
+                <span class="badge bg-success">Запущена</span>
+            {% elif mailing.status == 'completed' %}
+                <span class="badge bg-warning">Завершена</span>
+            {% endif %}
+        </p>
+
+        <p>Дата начала и окончания: {{ mailing.start_time }} - {{ mailing.end_time }}</p>
+        <p><strong>Тема:</strong> {{ mailing.message.subject }}</p>
+        <p><strong>Текст:</strong> {{ mailing.message.body|linebreaks }}</p>
+        {% if mailing.message.attachment %}
+            <p><strong>Вложение:</strong><a href="{{ mailing.message.attachment.url }}">
+                Скачать {{ mailing.message.attachment.name }}</a></p>
+        {% endif %}
+        <p>Клиенты: ({{ mailing.clients.count }}):</p>
+            <ul>
+                {% for client in mailing.clients.all %}
+                    <li>{{ client.full_name }} ({{ client.email }})</li>
+                {% endfor %}
+            </ul>
+        <p>Попыток отправки: {{ mailing.attempts.count }}</p>
+    </div>
+    <div class="card-footer">
+        <a href="{% url 'home' %}" class="btn btn-sm btn-warning">К статистике</a>
+        <a href="{% url 'mailings:list' %}" class="btn btn-sm btn-info">К списку</a>
+        {% if user == mailing.owner %}
+            {% if mailing.status == "started" or mailing.status == "created" %}
+                <form method="post" action="{% url 'mailings:send' mailing.pk %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-success">Отправить сейчас</button>
+                </form>
+            {% endif %}
+            <a href="{% url 'mailings:update' mailing.pk %}" class="btn btn-sm btn-primary">Редактировать</a>
+            <a href="{% url 'mailings:delete' mailing.pk %}" class="btn btn-sm btn-danger">Удалить</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
