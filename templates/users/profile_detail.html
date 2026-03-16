@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Профиль пользователя{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">Информация о пользователе</h5>
+    </div>
+    <div class="card-body">
+        <p>ID: {{ user.id }}</p>
+        <p>Email: {{ user.email }}</p>
+        <p>Телефон: {{ user.phone }}</p>
+        <p>Страна: {{ user.country }}</p>
+        <p>Аватар(Если есть):
+        {% if user.avatar %}
+            <img src="{{ user.avatar.url }}" class="img-thumbnail" width="150">
+        {% endif %}
+        </p>
+    </div>
+    <div class="card-footer">
+        <a href="{% url 'home' %}" class="btn btn-sm btn-warning">К статистике</a>
+        <a href="{% url 'mailings:list' %}" class="btn btn-sm btn-info">К списку</a>
+    </div>
+</div>
+{% endblock %}

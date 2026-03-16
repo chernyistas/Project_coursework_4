@@ -5,6 +5,7 @@
 <div class="container mt-5">
     <h2>Список сообщений</h2>
         <a href="{% url 'mailing_message:create' %}" class="btn btn-secondary">Добавить письмо</a>
+        <a href="{% url 'users:stats' %}" class="btn btn-info">Статистика</a>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -24,8 +25,14 @@
                 <td>{{ message.created_at }}</td>
                 <td>
                     <a href="{% url 'mailing_message:detail' message.pk %}" class="btn btn-sm btn-info">Посмотреть</a>
-                    <a href="{% url 'mailing_message:update' message.pk %}" class="btn btn-sm btn-warning">Редактировать</a>
-                    <a href="{% url 'mailing_message:delete' message.pk %}" class="btn btn-sm btn-danger">Удалить</a>
+                    {% if user == message.owner %}
+                        <a href="{% url 'mailing_message:update' message.pk %}" class="btn btn-sm btn-warning">
+                            Редактировать
+                        </a>
+                        <a href="{% url 'mailing_message:delete' message.pk %}" class="btn btn-sm btn-danger">
+                            Удалить
+                        </a>
+                    {% endif %}
                 </td>
             </tr>
         {% empty %}

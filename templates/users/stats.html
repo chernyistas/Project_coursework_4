@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Статистика рассылок{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">Общая статистика</h5>
+    </div>
+    <div class="card-body">
+        <p>Всего рассылок: {{ total_mailings }}</p>
+        <p>Всего попыток: {{ total_attempts }}</p>
+        <p>Успешных: {{ successful }}</p>
+        <p>Неуспешных: {{ failed }}</p>
+        <p>Процент успеха: {{ success_rate|floatformat:1 }}%</p>
+    </div>
+    <div class="card-footer">
+        <a href="{% url 'home' %}" class="btn btn-sm btn-warning">На главную</a>
+        <a href="{% url 'mailings:list' %}" class="btn btn-sm btn-info">К списку рассылок</a>
+    </div>
+</div>
+<div class="container mt-5">
+    <h2>Детальная статистика по рассылкам</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Тема</th>
+                <th>Статус</th>
+                <th>Всего попыток</th>
+                <th>Успешно</th>
+                <th>Неуспешно</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for stat in mailing_stats %}
+            <tr>
+                <td>{{ stat.mailing.id }}</td>
+                <td>{{ stat.mailing.message.subject|truncatechars:50 }}</td>
+                <td>
+                    {% if stat.mailing.status == 'created' %}
+                        <span class="badge bg-secondary">Создана</span>
+                    {% elif stat.mailing.status == 'started' %}
+                        <span class="badge bg-success">Запущена</span>
+                    {% elif stat.mailing.status == 'completed' %}
+                        <span class="badge bg-warning">Завершена</span>
+                    {% endif %}
+                </td>
+                <td>{{ stat.total }}</td>
+                <td>{{ stat.successful }}</td>
+                <td>{{ stat.failed }}</td>
+                <td>
+                    <a href="{% url 'mailings:detail' stat.mailing.id %}" class="btn btn-sm btn-info">Подробнее</a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">Нет данных для отображения</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

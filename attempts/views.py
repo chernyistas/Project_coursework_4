@@ -1,4 +1,4 @@
-from django.views.generic import ListView, DetailView
+from django.views.generic import DetailView, ListView
 
 from attempts.models import MailingAttempt
 
@@ -7,6 +7,7 @@ class MailingAttemptListView(ListView):
     model = MailingAttempt
     template_name = "attempts/mailing_attempt_list.html"
     context_object_name = "attempts"
+
 
 class MailingAttemptDetailView(DetailView):
     model = MailingAttempt

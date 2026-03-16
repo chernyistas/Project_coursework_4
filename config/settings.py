@@ -9,16 +9,16 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
+
 import os
 from pathlib import Path
 
-from django.conf.global_settings import EMAIL_HOST_PASSWORD, DEFAULT_FROM_EMAIL
 from dotenv import load_dotenv
+
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
@@ -30,9 +30,6 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = True if os.getenv("DEBUG") == "True" else False
 
 ALLOWED_HOSTS = ["*"]
-
-
-
 
 # Application definition
 
@@ -48,6 +45,7 @@ INSTALLED_APPS = [
     "mailings",
     "attempts",
     "main",
+    "users",
 ]
 
 MIDDLEWARE = [
@@ -65,7 +63,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, 'templates')],
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -73,14 +71,12 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-
             ],
         },
     },
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
-
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
@@ -95,7 +91,6 @@ DATABASES = {
         "PORT": os.getenv("DATABASE_PORT"),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -115,7 +110,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
@@ -127,17 +121,16 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, "static"),
 ]
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_HOST = 'smtp.mail.com'
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_HOST = "smtp.mail.com"
 EMAIL_PORT = 465
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
@@ -147,3 +140,23 @@ SERVER_EMAIL = os.getenv("SERVER_EMAIL")
 MEDIA_URL = "media/"
 MEDIA_ROOT = os.path.join(BASE_DIR / "media")
 
+AUTH_USER_MODEL = "users.User"
+
+LOGIN_URL = "/users/login/"
+LOGOUT_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = "/"
+
+CACHES_ENABLED = os.getenv("CACHES_ENABLED", "True") == "True"
+if CACHES_ENABLED:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": os.getenv("LOCATION"),
+        }
+    }
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.dummy.DummyCache",
+        }
+    }

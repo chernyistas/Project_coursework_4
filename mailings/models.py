@@ -1,7 +1,9 @@
 from django.db import models
 from django.utils import timezone
+
 from clients.models import Client
 from mailing_message.models import Message
+from users.models import User
 
 
 class Mailing(models.Model):
@@ -12,14 +14,29 @@ class Mailing(models.Model):
     CHOICES_STATUS = [
         (CREATED, "Создана"),
         (STARTED, "Запущена"),
-        (COMPLETED, "Завершена")
+        (COMPLETED, "Завершена"),
     ]
     start_time = models.DateTimeField(verbose_name="Время начала рассылки")
     end_time = models.DateTimeField(verbose_name="Время окончания рассылки")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
-    status = models.CharField(max_length=15, choices=CHOICES_STATUS, default=CREATED, verbose_name="Статус")
+    status = models.CharField(
+        max_length=15, choices=CHOICES_STATUS, default=CREATED, verbose_name="Статус"
+    )
     clients = models.ManyToManyField(Client, verbose_name="Клиенты")
-    message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name="mailings", verbose_name="Сообщение")
+    message = models.ForeignKey(
+        Message,
+        on_delete=models.CASCADE,
+        related_name="mailings",
+        verbose_name="Сообщение",
+    )
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name="Владелец",
+        related_name="mailings",
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return f"Рассылка #{self.id}: {self.message.subject[:30]}..."

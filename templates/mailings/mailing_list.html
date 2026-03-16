@@ -5,6 +5,7 @@
 <div class="container mt-5">
     <h2>Список рассылок</h2>
         <a href="{% url 'mailings:create' %}" class="btn btn-secondary">Создать рассылку</a>
+        <a href="{% url 'users:stats' %}" class="btn btn-info">Статистика</a>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -36,8 +37,16 @@
                 <td>{{ mailing.clients.count }}</td>
                 <td>
                     <a href="{% url 'mailings:detail' mailing.pk %}" class="btn btn-sm btn-info">Посмотреть</a>
-                    <a href="{% url 'mailings:update' mailing.pk %}" class="btn btn-sm btn-warning">Редактировать</a>
-                    <a href="{% url 'mailings:delete' mailing.pk %}" class="btn btn-sm btn-danger">Удалить</a>
+                    {% if user == mailing.owner %}
+                        <a href="{% url 'mailings:update' mailing.pk %}" class="btn btn-sm btn-warning">Редактировать</a>
+                        <a href="{% url 'mailings:delete' mailing.pk %}" class="btn btn-sm btn-danger">Удалить</a>
+                        {% if mailing.status == 'started' or mailing.status == 'created' %}
+                            <form method="post" action="{% url 'mailings:send' mailing.pk %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-success">Отправить</button>
+                            </form>
+                        {% endif %}
+                    {% endif %}
                 </td>
             </tr>
         {% empty %}

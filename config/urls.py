@@ -1,8 +1,9 @@
-from django.contrib import admin
-from django.urls import path, include
 from django.conf import settings
-from main.views import HomeView
 from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import include, path
+
+from main.views import HomeView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -11,6 +12,7 @@ urlpatterns = [
     path("message/", include("mailing_message.urls")),
     path("mailings/", include("mailings.urls")),
     path("attempts/", include("attempts.urls")),
+    path("users/", include("users.urls")),
 ]
 
 if settings.DEBUG:

@@ -1,6 +1,7 @@
 from django import forms
-from .models import Mailing
 from django.utils import timezone
+
+from .models import Mailing
 
 
 class MailingForm(forms.ModelForm):
@@ -13,12 +14,10 @@ class MailingForm(forms.ModelForm):
             "clients": forms.SelectMultiple(attrs={"size": "10"}),
         }
 
-
     def clean(self):
         cleaned_data = super().clean()
         start_time = cleaned_data.get("start_time")
         end_time = cleaned_data.get("end_time")
-
 
         if start_time and end_time:
             if self.instance is None or self.instance.pk is None:
@@ -26,6 +25,8 @@ class MailingForm(forms.ModelForm):
                     self.add_error("start_time", "Дата начала не может быть в прошлом")
 
             if start_time >= end_time:
-               self.add_error("end_time","Дата окончания должна быть позже даты начала")
+                self.add_error(
+                    "end_time", "Дата окончания должна быть позже даты начала"
+                )
 
         return cleaned_data
